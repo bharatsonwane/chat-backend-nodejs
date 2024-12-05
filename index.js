@@ -1,4 +1,4 @@
-/** nodejs inbuild library */
+/** nodejs inbuilt library */
 import path from "path";
 
 /** nodejs external library */
@@ -12,7 +12,7 @@ import cors from "cors";
 
 /** import from other files */
 import { envVariable } from "./src/constant/envVariable.js";
-// import routes from "./src/routes/routes.js";
+import routes from "./src/routes/routes.js";
 
 /** define add */
 const app = express();
@@ -39,7 +39,7 @@ app.use("/test", (req, res, next) => {
     `<html><body><h1><em>Chat backend project testing.</em></h1></body></html>`
   );
 });
-// app.use("/", routes); // App Main Routes
+app.use("/", routes); // App Main Routes
 
 app.use((req, res, next) => {
   const err = new Error("Url not found");
@@ -55,5 +55,5 @@ app.use((err, req, res, next) => {
 
 /** API url */
 app.listen(envVariable.port, () => {
-  console.log(`Server is listening on port '${envVariable.port}'`);
+  console.info(`Server is listening on port '${envVariable.port}'`);
 });
