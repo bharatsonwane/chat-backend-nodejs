@@ -7,9 +7,12 @@ export const envVariable = {
   swaggerPort: "localhost:8000",
 
   // database
-  dbHost: process.env.DB_HOST,
-  dbUser: process.env.DB_USER,
-  dbPassword: process.env.DB_PASSWORD,
-  dbName: process.env.DB_NAME,
-  dbPort: process.env.DB_PORT,
+  dbHost: process.env.DB_HOST || 'localhost' ,
+  dbUser: process.env.DB_USER || 'postgres',
+  dbPassword: process.env.DB_PASSWORD || 'Root@3',
+  dbName: process.env.DB_NAME || 'chat',
+  dbPort: process.env.DB_PORT || 5432,
 };
+
+
+console.log("envVariable", envVariable)

@@ -11,15 +11,15 @@ const pool = new Pool({
   port: envVariable.dbPort,
 });
 
-export const query = async (text, params) => {
-  const client = await pool.connect();
+export const executeQuery = async (text, params) => {
   try {
+    const client = await pool.connect();
     const result = await client.query(text, params);
     return result.rows; // Return only the rows for convenience
   } catch (error) {
     console.error("Database Query Error:", error);
     throw error;
   } finally {
-    client.release();
+    // client.release();
   }
 };
