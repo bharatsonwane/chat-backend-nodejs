@@ -91,20 +91,13 @@ CREATE TABLE IF NOT EXISTS user_chat_room_mapping (
 );
 
 
--- message_status_enum Type
-DO $$
-BEGIN
-    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'message_status_enum') THEN
-        CREATE TYPE message_status_enum AS ENUM ('edited', 'deleted', 'original');
-    END IF;
-END $$;
-
 -- chat_message Table
 CREATE TABLE IF NOT EXISTS chat_message (
     id SERIAL PRIMARY KEY,
     text TEXT, -- Message text content
     media VARCHAR(255), -- Media URL or file path
-    status message_status_enum DEFAULT 'original' NOT NULL, -- Message status (edited, deleted, original) with default value 'original'
+    is_edited BOOLEAN DEFAULT FALSE NOT NULL, -- Indicates if the message is edited
+    is_deleted BOOLEAN DEFAULT FALSE NOT NULL, -- Indicates if the message is deleted
     delivered_to JSON, -- JSON array storing who the message is delivered to
     read_by JSON, -- JSON array storing who has read the message
     reaction JSON, -- JSON storing reactions to the message
