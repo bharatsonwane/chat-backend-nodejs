@@ -16,7 +16,12 @@
 import express from "express";
 import { z } from "zod";
 import { createApiResponse } from "../doc/openAPIResponseBuilders.js";
-import { UserSchema, GetUserSchema, UserLoginSchema } from "../schemas/user.schema.js";
+import {
+  UserSchema,
+  GetUserSchema,
+  UserLoginSchema,
+} from "../schemas/user.schema.js";
+import { commonValidations } from "../schemas/commonValidation.js";
 import { validateRequest } from "../helper/httpHandlers.js";
 import * as userController from "../controllers/user.controller.js";
 import { userRegistry } from "../schemas/user.schema.js";
@@ -28,11 +33,18 @@ userRegistry.registerPath({
   path: "/user/authJWT/login",
   tags: ["User"],
   request: {
-    body: { content: { "application/json": { schema: UserLoginSchema.openapi({}) } } },
+    body: {
+      description: "User login",
+      content: { "application/json": { schema: UserLoginSchema.openapi({}) } },
+    },
   },
   responses: createApiResponse(z.array(UserSchema), "Success"),
 });
-router.post("/authJWT/login", validateRequest(UserLoginSchema), userController.postUserLogin);
+router.post(
+  "/authJWT/login",
+  validateRequest({ bodySchema: UserLoginSchema }),
+  userController.postUserLogin
+);
 
 userRegistry.registerPath({
   method: "get",
@@ -44,6 +56,33 @@ router.get("/", (req, res) => {
   res.send("Hello World");
 });
 
+
+
+
+/** test route with two query parameters */
+const TestQuerySchema = z.object({
+  query1: z.string().min(1),
+  query2: z.string().min(1),
+});
+
+userRegistry.registerPath({
+  method: "get",
+  path: "/user/test-query",
+  tags: ["User"],
+  request: { query: TestQuerySchema },
+  responses: createApiResponse(z.object({ message: z.string() }), "Success"),
+});
+
+router.get(
+  "/test-query",
+  validateRequest({ querySchema: TestQuerySchema }),
+  (req, res) => {
+    const { query1, query2 } = req.query;
+    res.send({ message: `You searched for: ${query1} and ${query2}` });
+  }
+);
+
+
 userRegistry.registerPath({
   method: "get",
   path: "/user/{id}",
@@ -52,8 +91,13 @@ userRegistry.registerPath({
   responses: createApiResponse(UserSchema, "Success"),
 });
 
-router.get("/:id", validateRequest(GetUserSchema), (req, res) => {
-  res.send("get user by id");
-});
+router.get(
+  "/:id",
+  validateRequest({ paramsSchema: {id: commonValidations.id} }),
+  (req, res) => {
+    res.send("get user by id");
+  }
+);
+
 
 export default router;
