@@ -27,9 +27,9 @@ export const postUserLogin = async (req, res, next) => {
 
 export const getUserProfile = async (req, res, next) => {
     try {
-        const userInfo = req.userInfo;
-        const resObj = await User.retrieveUserProfie(userInfo);
-        res.status(200).send(resObj);
+        // const userInfo = req.userInfo;
+        // const resObj = await User.retrieveUserProfie(userInfo);
+        // res.status(200).send(resObj);
     } catch (error) {
         res.status(error.statusCode ? error.statusCode : 500).send({ error: error.message });
     }

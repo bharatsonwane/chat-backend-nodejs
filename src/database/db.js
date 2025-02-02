@@ -1,7 +1,7 @@
 import pg from "pg";
 const { Pool } = pg;
 
-import { envVariable } from "../constant/envVariable.js";
+import { envVariable } from "../config/envVariable.js";
 
 const pool = new Pool({
   host: envVariable.dbHost,
