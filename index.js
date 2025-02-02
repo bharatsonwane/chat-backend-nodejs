@@ -6,7 +6,7 @@ import express from "express";
 import { envVariable } from "./src/config/envVariable.js";
 import routes from "./src/routes/routes.js";
 import { HttpError } from "./src/helper/httpError.js";
-import { openAPIRouter } from "./src/doc/openAPIRouter.js";
+import openApiRoutes from "./src/doc/openApiRoutes.js";
 
 /** define add */
 const app = express();
@@ -21,10 +21,10 @@ app.use("/test", (req, res, next) => {
   );
 });
 
-// Swagger UI
-app.use("/docs", openAPIRouter);
-
 app.use("/", routes); // App Main Routes
+
+// Swagger Doc UI
+app.use("/docs", openApiRoutes);
 
 app.use((req, res, next) => {
   const err = new HttpError("Url not found", 404);

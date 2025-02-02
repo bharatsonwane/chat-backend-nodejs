@@ -11,3 +11,5 @@ openAPIRouter.get("/swagger.json", (req, res) => {
 });
 
 openAPIRouter.use("/", swaggerUi.serve, swaggerUi.setup(openAPIDocument));
+
+export default openAPIRouter;

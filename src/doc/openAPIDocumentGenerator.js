@@ -1,11 +1,15 @@
+import { z } from "zod";
+
 import {
   OpenAPIRegistry,
   OpenApiGeneratorV3,
+  extendZodWithOpenApi
 } from "@asteasolutions/zod-to-openapi";
 
-import { userRegistry } from "../schemas/user.schema.js";
+export const docRegistry = new OpenAPIRegistry();
 
-export const docRegistry = new OpenAPIRegistry([userRegistry]);
+
+extendZodWithOpenApi(z);
 
 export function generateOpenAPIDocument() {
   const generator = new OpenApiGeneratorV3(docRegistry.definitions);
@@ -18,7 +22,7 @@ export function generateOpenAPIDocument() {
     },
     externalDocs: {
       description: "View the raw OpenAPI Specification in JSON format",
-      url: "/swagger.json",
+      url: "/docs/swagger.json",
     },
   });
 }
