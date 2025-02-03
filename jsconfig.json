@@ -1,12 +1,13 @@
 {
-    "compilerOptions": {
+  "compilerOptions": {
     //   "target": "ES2020",
     //   "module": "ESNext",
+    "module": "es2020",
     //   "noEmit": true,
     //   "allowJs": true,
-      "checkJs": true,
-   
-      /* Preact Config */
+    "checkJs": true
+
+    /* Preact Config */
     //   "jsx": "react-jsx",
     //   "jsxImportSource": "preact",
     //   "skipLibCheck": true,
@@ -14,6 +15,6 @@
     //     "react": ["./node_modules/preact/compat/"],
     //     "react-dom": ["./node_modules/preact/compat/"]
     //   }
-    },
-    // "include": ["node_modules/vite/client.d.ts", "**/*"]
   }
+  // "include": ["node_modules/vite/client.d.ts", "**/*"]
+}
