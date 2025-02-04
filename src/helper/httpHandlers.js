@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { StatusCodes } from "http-status-codes";
 import { ServiceResponse } from "../doc/serviceResponse.js";
 

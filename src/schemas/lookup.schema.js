@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { z } from "zod";
 import { docRegistry } from "../doc/openAPIDocumentGenerator.js";
 import { createApiResponse } from "../doc/openAPIResponseBuilders.js";
