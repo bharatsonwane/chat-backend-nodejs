@@ -14,7 +14,10 @@ import { userLoginDoc } from "../schemas/user.schema.js";
 
 const router = express.Router();
 
-const registrar = new RouteRegistrar(router);
+const registrar = new RouteRegistrar(router, {
+  basePath: "/user",
+  tags: ["User"],
+});
 
 registrar.post("/authJWT/login", {
   openApiDoc: userLoginDoc,

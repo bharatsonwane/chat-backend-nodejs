@@ -1,15 +1,23 @@
 import { validateRequest } from "../helper/httpHandlers.js";
 
 class RouteRegistrar {
-  constructor(router) {
+  constructor(router, { basePath = "", tags = [] }) {
     this.router = router;
+    this.basePath = basePath;
+    this.tags = tags;
   }
 
   registerRoute(method, path, { schema, openApiDoc, middleware, controller }) {
+    const fullRoutePath = `${this.basePath}${path}`;
+
     const middlewares = [];
 
     if (openApiDoc) {
-      openApiDoc();
+      openApiDoc({
+        routePath: fullRoutePath,
+        method,
+        tags: this.tags,
+      });
     }
 
     if (middleware) {
@@ -44,7 +52,9 @@ class RouteRegistrar {
     this.registerRoute("delete", path, options);
   }
 
-  // Add other HTTP methods as needed
+  patch(path, options) {
+    this.registerRoute("patch", path, options);
+  }
 }
 
 export default RouteRegistrar;

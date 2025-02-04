@@ -28,11 +28,11 @@ docRegistry.register("User", UserSchema);
 /**
  * @swagger
  */
-export const userLoginDoc = () => {
+export const userLoginDoc = ({ routePath, method, tags }) => {
   docRegistry.registerPath({
-    method: "post",
-    path: "/user/authJWT/login",
-    tags: ["User"],
+    method: method,
+    path: routePath,
+    tags: tags,
     request: {
       body: {
         description: "User login",
@@ -45,11 +45,11 @@ export const userLoginDoc = () => {
   });
 };
 
-export const getUserDoc = () => {
+export const getUserDoc = ({ routePath, method, tags }) => {
   docRegistry.registerPath({
-    method: "get",
-    path: "/user",
-    tags: ["User"],
+    method: method,
+    path: routePath,
+    tags: tags,
     responses: createApiResponse(z.array(UserSchema), "Success"),
   });
 };
@@ -59,21 +59,21 @@ export const TestQuerySchema = z.object({
   query2: z.string().min(1),
 });
 
-export const testQueryDoc = () => {
+export const testQueryDoc = ({ routePath, method, tags }) => {
   docRegistry.registerPath({
-    method: "get",
-    path: "/user/test-query",
-    tags: ["User"],
+    method: method,
+    path: routePath,
+    tags: tags,
     request: { query: TestQuerySchema },
     responses: createApiResponse(z.object({ message: z.string() }), "Success"),
   });
 };
 
-export const getUserByIdDoc = () => {
+export const getUserByIdDoc = ({ routePath, method, tags }) => {
   docRegistry.registerPath({
-    method: "get",
-    path: "/user/{id}",
-    tags: ["User"],
+    method: method,
+    path: routePath,
+    tags: tags,
     request: { params: GetUserSchema.shape.params },
     responses: createApiResponse(UserSchema, "Success"),
   });
