@@ -5,8 +5,10 @@ import { docRegistry } from "../doc/openAPIDocumentGenerator.js";
 import { commonValidations } from "./commonValidation.js";
 import { createApiResponse } from "../doc/openAPIResponseBuilders.js";
 
+import { idSchema } from "./commonValidation.js";
+
 export const UserLoginSchema = z.object({
-  email: z.string().email(),
+  email: z.string().email("Invalid email"),
   password: z.string(),
 });
 
@@ -17,11 +19,6 @@ export const UserSchema = z.object({
   age: z.number(),
   createdAt: z.date(),
   updatedAt: z.date(),
-});
-
-// Input Validation for 'GET users/:id' endpoint
-export const GetUserSchema = z.object({
-  params: z.object({ id: commonValidations.id }),
 });
 
 docRegistry.register("User", UserSchema);
@@ -75,7 +72,7 @@ export const getUserByIdDoc = ({ routePath, method, tags }) => {
     method: method,
     path: routePath,
     tags: tags,
-    request: { params: GetUserSchema.shape.params },
+    request: { params: idSchema.shape.params },
     responses: createApiResponse(UserSchema, "Success"),
   });
 };

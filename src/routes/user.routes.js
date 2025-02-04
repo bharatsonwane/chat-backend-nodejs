@@ -19,7 +19,7 @@ const registrar = new RouteRegistrar(router, {
   tags: ["User"],
 });
 
-registrar.post("/authJWT/login", {
+registrar.post("/login", {
   openApiDoc: userLoginDoc,
   schema: { bodySchema: UserLoginSchema },
   controller: userController.postUserLogin,
@@ -31,13 +31,13 @@ registrar.get("/", {
   controller: userController.postUserLogin,
 });
 
-registrar.get("/test-query", {
-  openApiDoc: testQueryDoc,
-  schema: { querySchema: TestQuerySchema },
-  controller: (req, res) => {
-    res.send("test query");
-  },
-});
+// registrar.get("/test-query", {
+//   openApiDoc: testQueryDoc,
+//   schema: { querySchema: TestQuerySchema },
+//   controller: (req, res) => {
+//     res.send("test query");
+//   },
+// });
 
 registrar.get("/:id", {
   openApiDoc: getUserByIdDoc,

@@ -10,11 +10,12 @@ class RouteRegistrar {
   registerRoute(method, path, { schema, openApiDoc, middleware, controller }) {
     const fullRoutePath = `${this.basePath}${path}`;
 
+    const docFullPath = fullRoutePath.replace(/:\w+/g, "{id}");
     const middlewares = [];
 
     if (openApiDoc) {
       openApiDoc({
-        routePath: fullRoutePath,
+        routePath: docFullPath,
         method,
         tags: this.tags,
       });

@@ -8,3 +8,13 @@ export const retrieveLookupList = async (req, res, next) => {
     next(error);
   }
 };
+
+export const getLookupTypeById = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const data = await Lookup.getLookupTypeById(id);
+    res.status(200).send(data);
+  } catch (error) {
+    next(error);
+  }
+};

@@ -10,4 +10,6 @@ export const commonValidations = {
   // ... other common validations
 };
 
-
+export const idSchema = z.object({
+  params: z.object({ id: commonValidations.id }),
+});

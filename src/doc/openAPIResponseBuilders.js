@@ -12,7 +12,7 @@ export function createApiResponse(
       description,
       content: {
         "application/json": {
-          schema: ServiceResponseSchema(schema),
+          schema: schema,
         },
       },
     },
@@ -26,7 +26,7 @@ export function createApiResponses(configs) {
       description,
       content: {
         "application/json": {
-          schema: ServiceResponseSchema(schema),
+          schema: schema,
         },
       },
     };
