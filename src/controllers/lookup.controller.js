@@ -5,7 +5,7 @@ export const retrieveLookupList = async (req, res, next) => {
     const data = await Lookup.retrieveLookupList();
     res.status(200).send(data);
   } catch (error) {
-    next(error);
+    res.error(error);
   }
 };
 
@@ -15,6 +15,6 @@ export const getLookupTypeById = async (req, res, next) => {
     const data = await Lookup.getLookupTypeById(id);
     res.status(200).send(data);
   } catch (error) {
-    next(error);
+    res.error(error);
   }
 };

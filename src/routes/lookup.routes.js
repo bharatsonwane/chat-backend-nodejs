@@ -1,7 +1,7 @@
 import express from "express";
 
 import * as lookupController from "../controllers/lookup.controller.js";
-import RouteRegistrar from "../helper/RouteRegistrar.js";
+import RouteRegistrar from "../middleware/RouteRegistrar.js";
 import { getLookupListDoc, getLookupTypeByIdDoc } from "../schemas/lookup.schema.js";
 
 const router = express.Router();

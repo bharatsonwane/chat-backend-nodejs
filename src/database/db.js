@@ -8,7 +8,6 @@ import logger from "../helper/logger.js";
 
 const { Pool } = pg;
 
-
 let pool = null;
 let client = null;
 
@@ -56,7 +55,6 @@ export const getDbClient = async () => {
 
 export const migrateDatabases = async () => {
   try {
-    debugger
     const __dirname = dirname(fileURLToPath(import.meta.url));
     const client = await getDbClient();
 
@@ -74,7 +72,6 @@ export const migrateDatabases = async () => {
     const maxVersion = await postgrator.getMaxVersion();
     await postgrator.migrate();
   } catch (error) {
-    debugger
     logger.error("Migration failed", error);
     throw error;
   }

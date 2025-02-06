@@ -6,10 +6,11 @@ import {
   getUserDoc,
   getUserByIdDoc,
   testQueryDoc,
+  signupUserDoc,
 } from "../schemas/user.schema.js";
 import { commonValidations } from "../schemas/commonValidation.js";
 import * as userController from "../controllers/user.controller.js";
-import RouteRegistrar from "../helper/RouteRegistrar.js";
+import RouteRegistrar from "../middleware/RouteRegistrar.js";
 import { userLoginDoc } from "../schemas/user.schema.js";
 
 const router = express.Router();
@@ -23,6 +24,13 @@ registrar.post("/login", {
   openApiDoc: userLoginDoc,
   schema: { bodySchema: UserLoginSchema },
   controller: userController.postUserLogin,
+});
+
+// signup
+registrar.post("/signup", {
+  openApiDoc: signupUserDoc,
+  schema: { bodySchema: UserSchema },
+  controller: userController.postUserSignup,
 });
 
 registrar.get("/", {

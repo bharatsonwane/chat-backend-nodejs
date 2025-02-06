@@ -25,11 +25,27 @@ BEGIN
     END IF;
 END $$;
 
+-- gender_enum Type
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'gender_enum') THEN
+        CREATE TYPE gender_enum AS ENUM ('Male', 'Female', 'Other');
+    END IF;
+END $$;
+
 -- blood_group_enum Type
 DO $$
 BEGIN
     IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'blood_group_enum') THEN
         CREATE TYPE blood_group_enum AS ENUM ('A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-');
+    END IF;
+END $$;
+
+-- married_status_enum Type
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'married_status_enum') THEN
+        CREATE TYPE married_status_enum AS ENUM ( 'Single', 'Married', 'Divorced', 'Widowed');
     END IF;
 END $$;
 
@@ -41,10 +57,10 @@ CREATE TABLE IF NOT EXISTS user_profile (
     last_name VARCHAR(255) NOT NULL,
     middle_name VARCHAR(255),
     maiden_name VARCHAR(255),
-    gender VARCHAR(50),
+    gender gender_enum, -- Use ENUM type
     dob DATE,
     blood_group blood_group_enum, -- Use ENUM type
-    married_status BOOLEAN,
+    married_status married_status_enum,
     email VARCHAR(255) UNIQUE NOT NULL,
     phone VARCHAR(255) UNIQUE NOT NULL,
     password VARCHAR(255),  -- Store hashed password

@@ -1,4 +1,4 @@
-import { validateRequest } from "../helper/httpHandlers.js";
+import { validateRequest } from "./httpHandlers.js";
 
 class RouteRegistrar {
   constructor(router, { basePath = "", tags = [] }) {

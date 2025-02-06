@@ -7,6 +7,8 @@ import { envVariable } from "./src/config/envVariable.js";
 import routes from "./src/routes/routes.js";
 import { HttpError } from "./src/helper/httpError.js";
 import openApiRoutes from "./src/doc/openApiRoutes.js";
+import responseHandler from "./src/middleware/responseHandler.js";
+import logger from "./src/helper/logger.js";
 
 async function main() {
   /** define add */
@@ -14,6 +16,9 @@ async function main() {
 
   /** add middleware  */
   app.use(express.json());
+
+  /* Use the response & error handling middleware */
+  app.use(responseHandler);
 
   /** Route */
   app.use("/test", (req, res, next) => {
@@ -32,22 +37,16 @@ async function main() {
     next(err);
   });
 
-  app.use((err, req, res, next) => {
-    res
-      .status(err.statusCode ? err.statusCode : 500)
-      .send({ error: err.message, data: err.data });
-  });
-
   /** API url */
   app.listen(envVariable.API_PORT, () => {
-    console.info(`Server is listening on port '${envVariable.API_PORT}'`);
+    logger.info(`Server is listening on port '${envVariable.API_PORT}'`);
   });
 }
 
 main()
   .then(() => {
-    console.log("done");
+    logger.log("done");
   })
   .catch((err) => {
-    console.error(err);
+    logger.error(err);
   });

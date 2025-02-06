@@ -1,6 +1,7 @@
 import { executeQuery } from "../database/db.js";
+import { HttpError } from "../helper/httpError.js";
 
-export default class Product {
+export default class Lookup {
   constructor(reqObj) {}
 
   static async retrieveLookupList() {
@@ -64,11 +65,17 @@ export default class Product {
        l.id AS "lookupId",
        l.label AS "lookupLabel"
      FROM lookup_type lt
-     LEFT JOIN lookup l ON lt.id = ${id};
+     INNER JOIN lookup l ON lt.id = l.lookup_type_id
+     WHERE lt.id = ${id};
     `;
 
     // Execute the query
     const results = await executeQuery(query);
+
+    if (results.length === 0) {
+      throw new HttpError("Lookup Type not found", 404);
+    }
+
     const lookupType = results[0];
 
     const data = {
