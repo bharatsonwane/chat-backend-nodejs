@@ -95,4 +95,35 @@ export default class Lookup {
     });
     return data;
   }
+
+  static async getUserStatusPendingId() {
+    const query = `
+      SELECT l.id 
+      FROM lookup l
+      INNER JOIN lookup_type lt ON l.lookup_type_id = lt.id
+      WHERE l.label = 'Pending' AND lt.name = 'userStatus';
+    `;
+    const results = await executeQuery(query);
+
+    if (results.length === 0) {
+      throw new HttpError("Lookup Pending user_status not found.", 404);
+    }
+
+    return results[0].id;
+  }
+
+  static async getUserRoleUserId() {
+    const query = `
+      SELECT l.id
+      FROM lookup l
+      INNER JOIN lookup_type lt ON l.lookup_type_id = lt.id
+      WHERE l.label = 'Standard' AND lt.name = 'userRole';`
+    const results = await executeQuery(query);
+
+    if (results.length === 0) {
+      throw new HttpError("Lookup User user_role not found.", 404);
+    }
+
+    return results[0].id;
+  }
 }

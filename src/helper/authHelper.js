@@ -1,7 +1,6 @@
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-
-import { envVariable } from "../config/envVariable";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import { envVariable } from "../config/envVariable.js";
 
 // // AUTH
 export const getHashPassword = async (password) => {
