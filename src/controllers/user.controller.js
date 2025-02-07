@@ -100,3 +100,13 @@ export const updateUserProfile = async (req, res, next) => {
     res.error(error);
   }
 };
+
+export const getUsers = async (req, res, next) => {
+  try {
+
+    const users = await User.getUsers();
+    res.status(200).send(users);
+  } catch (error) {
+    res.error(error);
+  }
+}

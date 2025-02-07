@@ -34,16 +34,19 @@ registrar.post("/signup", {
   controller: userController.postUserSignup,
 });
 
+
+// get all users
+registrar.get("/list", {
+  openApiDoc: getUserDoc,
+  controller: userController.getUsers,
+});
+
 registrar.get("/:id", {
   openApiDoc: getUserByIdDoc,
   schema: { paramsSchema: { id: commonValidations.id } },
   controller: userController.getUserById,
 });
 
-// registrar.get("/:", {
-//   openApiDoc: getUserDoc,
-//   controller: userController.postUserLogin,
-// });
 
 // registrar.get("/test-query", {
 //   openApiDoc: testQueryDoc,

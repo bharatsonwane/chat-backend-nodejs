@@ -1,10 +1,4 @@
 import { executeQuery } from "../database/db.js";
-import {
-  createTwtToken,
-  getHashPassword,
-  validatePassword,
-} from "../helper/authHelper.js";
-import { HttpError } from "../helper/httpError.js";
 
 export default class User {
   constructor(reqObj) {
@@ -181,5 +175,40 @@ export default class User {
     delete response.password;
 
     return response;
+  }
+
+  static async getUsers() {
+    const query = `
+        SELECT 
+          up.id,
+          up.title,
+          up.first_name,
+          up.last_name,
+          up.middle_name,
+          up.maiden_name,
+          up.gender,
+          up.dob,
+          up.blood_group,
+          up.married_status,
+          up.email,
+          up.phone,
+          up.profile_picture,
+          up.bio,
+          up.user_status_lookup_id,
+          up.user_role_lookup_id,
+          usl.label AS user_status,
+          url.label AS user_role,
+          up.created_at,
+          up.updated_at
+      FROM 
+        user_profile up
+      LEFT JOIN 
+        lookup usl ON up.user_status_lookup_id = usl.id
+      LEFT JOIN 
+        lookup url ON up.user_role_lookup_id = url.id;`;
+
+    const results = await executeQuery(query);
+
+    return results;
   }
 }
