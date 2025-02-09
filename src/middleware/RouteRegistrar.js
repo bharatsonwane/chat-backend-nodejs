@@ -1,4 +1,6 @@
-import { validateRequest } from "./httpHandlers.js";
+import { validateRequest } from "./validationMiddleware.js";
+import { bearerAuth, docRegistry } from "../doc/openAPIDocumentGenerator.js";
+import { commonDocCreator } from "../doc/openAPIDocumentGenerator.js";
 
 class RouteRegistrar {
   constructor(router, { basePath = "", tags = [] }) {
@@ -7,29 +9,45 @@ class RouteRegistrar {
     this.tags = tags;
   }
 
-  registerRoute(method, path, { schema, openApiDoc, middleware, controller }) {
+  registerRoute(
+    method,
+    path,
+    { middleware = [], controller , openApiDoc, requestSchema,  responseSchemas}
+  ) {
     const fullRoutePath = `${this.basePath}${path}`;
 
     const docFullPath = fullRoutePath.replace(/:\w+/g, "{id}");
     const middlewares = [];
 
+    const openApiDocConfig = {
+      routePath: docFullPath,
+      method,
+      tags: this.tags,
+      requestSchema,
+      responseSchemas
+    };
+
+    if (middleware?.length > 0) {
+      openApiDocConfig.security = [{ [bearerAuth.name]: [] }];
+    }
+
     if (openApiDoc) {
-      openApiDoc({
-        routePath: docFullPath,
-        method,
-        tags: this.tags,
-      });
+      // Check if middleware is present in the middleware array
+
+      openApiDoc(openApiDocConfig);
+    } else {
+      commonDocCreator(openApiDocConfig);
     }
 
-    if (middleware) {
-      middlewares.push(...middleware);
-    }
-
-    if (schema) {
-      const { bodySchema, querySchema, paramsSchema } = schema;
+    if (requestSchema) {
+      const { bodySchema, querySchema, paramsSchema } = requestSchema;
       middlewares.push(
         validateRequest({ bodySchema, querySchema, paramsSchema })
       );
+    }
+
+    if (middleware?.length > 0) {
+      middlewares.push(...middleware);
     }
 
     middlewares.push(controller);

@@ -1,4 +1,4 @@
-// @ts-nocheck
+//@ts-ignore
 import Postgrator from "postgrator";
 import pg from "pg";
 import { dirname } from "path";
@@ -32,7 +32,7 @@ export const executeQuery = async (text, params) => {
     const result = await client.query(text, params);
     return result.rows; // Return only the rows for convenience
   } catch (error) {
-    console.error("Database Query Error:", error);
+    logger.error("Database Query Error:", error);
     throw error;
   } finally {
     // client.release();

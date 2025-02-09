@@ -50,10 +50,11 @@ export const postUserSignup = async (req, res, next) => {
   try {
     const reqBody = req.body;
     const userObject = new User(reqBody);
+    debugger
 
     /** check user exists on phone and email  */
     const userData = await userObject.getUserByEmailOrPhone();
-    if (!userData) {
+    if (userData) {
       throw new HttpError("User already exists", 400);
     }
 

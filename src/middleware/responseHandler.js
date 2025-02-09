@@ -5,6 +5,8 @@
   The error method will send the status code and the error message in the response body.
  */
 
+import logger from "../helper/logger.js";
+
 const responseHandler = (req, res, next) => {
   res.success = (data) => {
     res.status(200).json({
@@ -14,7 +16,7 @@ const responseHandler = (req, res, next) => {
   };
 
   res.error = (err) => {
-    console.error(err.stack);
+    logger.error(err.stack);
     res.status(err.statusCode || 500).json({
       status: "error",
       message: err.message || "Internal Server Error",

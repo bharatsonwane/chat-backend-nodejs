@@ -1,13 +1,10 @@
-// @ts-nocheck
+//@ts-ignore
 import { z } from "zod";
 import { docRegistry } from "../doc/openAPIDocumentGenerator.js";
 
-import { commonValidations } from "./commonValidation.js";
-import { createApiResponse } from "../doc/openAPIResponseBuilders.js";
+import { createApiResponse } from "../doc/openAPIDocumentGenerator.js";
 
-import { idSchema } from "./commonValidation.js";
-import e from "express";
-import path from "path";
+import { idSchema } from "./common.schema.js";
 
 /**@description user Login schema */
 export const UserLoginSchema = z.object({
@@ -79,42 +76,6 @@ export const UserUpdateSchema = z.object({
 });
 docRegistry.register("UserUpdate", UserUpdateSchema);
 
-/**@description User Login Doc */
-export const userLoginDoc = ({ routePath, method, tags }) => {
-  docRegistry.registerPath({
-    method: method,
-    path: routePath,
-    tags: tags,
-    request: {
-      body: {
-        description: "User login",
-        content: {
-          "application/json": { schema: UserLoginSchema.openapi({}) },
-        },
-      },
-    },
-    responses: createApiResponse(z.array(UserSchema), "Success"),
-  });
-};
-
-/**@description User Signup Doc */
-export const signupUserDoc = ({ routePath, method, tags }) => {
-  docRegistry.registerPath({
-    method: method,
-    path: routePath,
-    tags: tags,
-    request: {
-      body: {
-        description: "User signup",
-        content: {
-          "application/json": { schema: UserSignupSchema.openapi({}) },
-        },
-      },
-    },
-    responses: createApiResponse(UserSignupSchema, "Success"),
-  });
-};
-
 /**@description Update User Password Doc */
 export const updateUserPasswordDoc = ({ routePath, method, tags }) => {
   docRegistry.registerPath({
@@ -149,47 +110,21 @@ export const updateUserPasswordDoc = ({ routePath, method, tags }) => {
 };
 
 /**@description Get User Doc */
-export const getUserDoc = ({ routePath, method, tags }) => {
+export const getUserDoc = ({ routePath, method, tags, security }) => {
   docRegistry.registerPath({
     method: method,
     path: routePath,
     tags: tags,
+    security: security,
     responses: createApiResponse(z.array(UserSchema), "Success"),
   });
 };
+
 /** test route with two query parameters */
 export const TestQuerySchema = z.object({
   query1: z.string().min(1),
   query2: z.string().min(1),
 });
-
-export const getUserByIdDoc = ({ routePath, method, tags }) => {
-  docRegistry.registerPath({
-    method: method,
-    path: routePath,
-    tags: tags,
-    request: { params: idSchema.shape.params },
-    responses: createApiResponse(UserSchema, "Success"),
-  });
-};
-
-export const updateUserDoc = ({ routePath, method, tags }) => {
-  docRegistry.registerPath({
-    method: method,
-    path: routePath,
-    tags: tags,
-    request: {
-      params: idSchema.shape.params,
-      body: {
-        description: "User login",
-        content: {
-          "application/json": { schema: UserUpdateSchema.openapi({}) },
-        },
-      },
-    },
-    responses: createApiResponse(UserSchema, "Success"),
-  });
-};
 
 /** test query doc */
 export const testQueryDoc = ({ routePath, method, tags }) => {

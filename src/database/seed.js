@@ -1,3 +1,4 @@
+import logger from "../helper/logger.js";
 import { executeQuery } from "./db.js";
 
 async function main() {
@@ -20,9 +21,7 @@ async function main() {
     //       ],
     //     },
     //   ];
-
     //   const output = []; // To hold the final formatted result
-
     //   for (const lookupType of lookupTypeList) {
     //     // Step 1: Upsert LookupType
     //     const upsertLookupTypeQuery = `
@@ -36,10 +35,8 @@ async function main() {
     //       lookupType.name,
     //     ]);
     //     const { id: lookupTypeId, name: lookupTypeName } = lookupTypeResult[0];
-
     //     // Prepare the lookups array for this LookupType
     //     const lookupsArray = [];
-
     //     // Step 2: Upsert Lookups for this LookupType
     //     for (const lookup of lookupType.lookups) {
     //       const upsertLookupQuery = `
@@ -54,10 +51,8 @@ async function main() {
     //         lookup.label,
     //         lookupTypeId,
     //       ]);
-
     //       lookupsArray.push(lookupResult[0]); // Add the upserted/updated lookup to the array
     //     }
-
     //     // Add the LookupType with its Lookups to the output
     //     output.push({
     //       id: lookupTypeId,
@@ -65,16 +60,13 @@ async function main() {
     //       lookups: lookupsArray,
     //     });
     //   }
-
     //   console.log("Upsert operation completed successfully!");
-
     //   return output;
     // };
     // const lookupData = await upsertAndFetchLookupData();
-
     // console.log("lookupData", lookupData);
   } catch (error) {
-    console.error("Error occurred during seeding:", error);
+    logger.error("Error occurred during seeding:", error);
   } finally {
   }
 }

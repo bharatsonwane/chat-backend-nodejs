@@ -1,21 +1,26 @@
-import express from "express";
+import express, { response } from "express";
+
+// @ts-ignore
+import { z } from "zod";
 import {
   UserSchema,
   UserLoginSchema,
-  TestQuerySchema,
   getUserDoc,
-  getUserByIdDoc,
-  testQueryDoc,
-  signupUserDoc,
   UserSignupSchema,
-  updateUserDoc,
   UserUpdateSchema,
   updateUserPasswordDoc,
 } from "../schemas/user.schema.js";
-import { commonValidations } from "../schemas/commonValidation.js";
-import {getUserById, getUsers, postUserLogin, postUserSignup, updateUserPassword, updateUserProfile} from "../controllers/user.controller.js";
+import { idValidation } from "../schemas/common.schema.js";
+import {
+  getUserById,
+  getUsers,
+  postUserLogin,
+  postUserSignup,
+  updateUserPassword,
+  updateUserProfile,
+} from "../controllers/user.controller.js";
 import RouteRegistrar from "../middleware/RouteRegistrar.js";
-import { userLoginDoc } from "../schemas/user.schema.js";
+import { authRoleMiddleware } from "../middleware/authRoleMiddleware.js";
 
 const router = express.Router();
 
@@ -24,59 +29,56 @@ const registrar = new RouteRegistrar(router, {
   tags: ["User"],
 });
 
-/**@description user login  */
+// /**@description user login  */
 registrar.post("/login", {
-  openApiDoc: userLoginDoc,
-  schema: { bodySchema: UserLoginSchema },
+  requestSchema: { bodySchema: UserLoginSchema },
+  responseSchemas: [{ statusCode: 200, schema: UserSchema }],
   controller: postUserLogin,
 });
 
 /**@description user signup  */
 registrar.post("/signup", {
-  openApiDoc: signupUserDoc,
-  schema: { bodySchema: UserSignupSchema },
+  requestSchema: { bodySchema: UserSignupSchema },
+  responseSchemas: [{ statusCode: 200, schema: UserSignupSchema }],
   controller: postUserSignup,
 });
-
 
 /**@description get all users  */
 registrar.get("/list", {
   openApiDoc: getUserDoc,
+  middleware: [authRoleMiddleware()],
   controller: getUsers,
 });
 
 /**@description update user password  */
 registrar.put("/:id/update-password/", {
   openApiDoc: updateUserPasswordDoc,
-  schema: {
-    paramsSchema: { id: commonValidations.id },
+  requestSchema: {
+    paramsSchema: { id: idValidation },
     bodySchema: UserUpdateSchema,
   },
   controller: updateUserPassword,
 });
 
-
 /**@description get user by id  */
 registrar.get("/:id", {
-  openApiDoc: getUserByIdDoc,
-  schema: { paramsSchema: { id: commonValidations.id } },
+  requestSchema: { paramsSchema: { id: idValidation } },
   controller: getUserById,
 });
 
 /**@description update user by id  */
 registrar.put("/:id", {
-  openApiDoc: updateUserDoc,
-  schema: {
-    paramsSchema: { id: commonValidations.id },
+  requestSchema: {
+    paramsSchema: { id: idValidation },
     bodySchema: UserUpdateSchema,
   },
+  responseSchemas: [{ statusCode: 200, schema: UserSchema }],
   controller: updateUserProfile,
 });
 
-
 // registrar.get("/test-query", {
 //   openApiDoc: testQueryDoc,
-//   schema: { querySchema: TestQuerySchema },
+//   requestSchema: { querySchema: TestQuerySchema },
 //   controller: (req, res) => {
 //     res.send("test query");
 //   },

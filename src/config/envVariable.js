@@ -1,5 +1,6 @@
 import { z } from "zod";
 import dotenv from "dotenv";
+import logger from "../helper/logger.js";
 
 dotenv.config();
 
@@ -42,7 +43,7 @@ const getEnvVariable = () => {
     envVariableSchema.parse(environmentVariable);
     return environmentVariable;
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     throw new Error("Environment variable validation failed");
   }
 };

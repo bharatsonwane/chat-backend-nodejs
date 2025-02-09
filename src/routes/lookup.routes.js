@@ -6,9 +6,10 @@ import {
 } from "../controllers/lookup.controller.js";
 import RouteRegistrar from "../middleware/RouteRegistrar.js";
 import {
-  getLookupListDoc,
-  getLookupTypeByIdDoc,
+  LookupListSchema,
+  LookupTypeSchema,
 } from "../schemas/lookup.schema.js";
+import { idValidation } from "../schemas/common.schema.js";
 
 const router = express.Router();
 const registrar = new RouteRegistrar(router, {
@@ -17,12 +18,15 @@ const registrar = new RouteRegistrar(router, {
 });
 
 registrar.get("/list", {
-  openApiDoc: getLookupListDoc,
+  responseSchemas: [{ statusCode: 200, schema: LookupListSchema }],
   controller: retrieveLookupList,
 });
 
 registrar.get("/type/:id", {
-  openApiDoc: getLookupTypeByIdDoc,
+  requestSchema: {
+    paramsSchema: { id: idValidation },
+  },
+  responseSchemas: [{ statusCode: 200, schema: LookupTypeSchema }],
   controller: getLookupTypeById,
 });
 

@@ -14,17 +14,14 @@ export const validatePassword = async (password, hashedPassword) => {
 };
 
 export const createTwtToken = async (tokenDataObject) => {
-  const jwtToken = jwt.sign(
-    { data: { ...tokenDataObject } },
-    envVariable.JWT_SECRET,
-    { expiresIn: 24 * 60 * 60 }
-  );
+  const jwtToken = jwt.sign({ ...tokenDataObject }, envVariable.JWT_SECRET, {
+    expiresIn: 24 * 60 * 60,
+  });
   return jwtToken;
 };
 
 export const validateJwtToken = async (token) => {
-  try {
-    // verify a token symmetric - synchronous
-    const decodedToken = jwt.verify(token, "secretKey");
-  } catch (error) {}
+  // verify a token symmetric - synchronous
+  const decodedToken = jwt.verify(token, envVariable.JWT_SECRET);
+  return decodedToken;
 };
