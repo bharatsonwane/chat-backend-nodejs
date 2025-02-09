@@ -6,7 +6,7 @@ import {
   OpenAPIRegistry,
   OpenApiGeneratorV3,
   extendZodWithOpenApi,
-// @ts-ignore
+  // @ts-ignore
 } from "@asteasolutions/zod-to-openapi";
 
 export function createApiResponse(
@@ -59,6 +59,7 @@ export const commonDocCreator = ({
   tags,
   requestSchema,
   responseSchemas = [],
+  security,
 }) => {
   const paramsSchema = requestSchema?.paramsSchema;
   const bodySchema = requestSchema?.bodySchema;
@@ -103,6 +104,10 @@ export const commonDocCreator = ({
     );
 
     config.responses = responses;
+  }
+
+  if (security) {
+    config.security = security;
   }
 
   docRegistry.registerPath({ ...config });

@@ -57,12 +57,14 @@ registrar.put("/:id/update-password/", {
     paramsSchema: { id: idValidation },
     bodySchema: UserUpdateSchema,
   },
+  middleware: [authRoleMiddleware()],
   controller: updateUserPassword,
 });
 
 /**@description get user by id  */
 registrar.get("/:id", {
   requestSchema: { paramsSchema: { id: idValidation } },
+  middleware: [authRoleMiddleware()],
   controller: getUserById,
 });
 
@@ -73,6 +75,7 @@ registrar.put("/:id", {
     bodySchema: UserUpdateSchema,
   },
   responseSchemas: [{ statusCode: 200, schema: UserSchema }],
+  middleware: [authRoleMiddleware()],
   controller: updateUserProfile,
 });
 

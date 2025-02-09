@@ -77,11 +77,12 @@ export const UserUpdateSchema = z.object({
 docRegistry.register("UserUpdate", UserUpdateSchema);
 
 /**@description Update User Password Doc */
-export const updateUserPasswordDoc = ({ routePath, method, tags }) => {
+export const updateUserPasswordDoc = ({ routePath, method, tags, security }) => {
   docRegistry.registerPath({
     method: method,
     path: routePath,
     tags: tags,
+    security: security,
     request: {
       params: idSchema.shape.params,
       body: {

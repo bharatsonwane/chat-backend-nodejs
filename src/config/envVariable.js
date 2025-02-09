@@ -1,4 +1,6 @@
+// @ts-ignore
 import { z } from "zod";
+// @ts-ignore
 import dotenv from "dotenv";
 import logger from "../helper/logger.js";
 
