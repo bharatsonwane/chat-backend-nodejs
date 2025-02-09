@@ -7,6 +7,7 @@ import { createApiResponse } from "../doc/openAPIResponseBuilders.js";
 
 import { idSchema } from "./commonValidation.js";
 import e from "express";
+import path from "path";
 
 /**@description user Login schema */
 export const UserLoginSchema = z.object({
@@ -24,6 +25,12 @@ export const UserSignupSchema = z.object({
   lastName: z.string().min(2),
 });
 docRegistry.register("UserSignup", UserSignupSchema);
+
+export const UserUpdatePasswordSchema = z.object({
+  password: z.string().min(6, "Password should be at least 6 characters long"),
+  email: z.string().email("Invalid email"),
+  phone: z.string().min(10),
+});
 
 /**@description User schema */
 export const UserSchema = z.object({
@@ -52,8 +59,6 @@ export const UserSchema = z.object({
 });
 docRegistry.register("User", UserSchema);
 
-
-
 /**@description User Update schema */
 export const UserUpdateSchema = z.object({
   title: z.enum(["Mr", "Mrs", "Ms"]).optional(),
@@ -64,13 +69,15 @@ export const UserUpdateSchema = z.object({
   gender: z.enum(["Male", "Female", "Other"]).optional(),
   dob: z
     .string()
-    .regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date format, should be YYYY-MM-DD").optional(),
-  bloodGroup: z.enum(["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"]).optional(),
+    .regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date format, should be YYYY-MM-DD")
+    .optional(),
+  bloodGroup: z
+    .enum(["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"])
+    .optional(),
   marriedStatus: z.enum(["Single", "Married"]).optional(),
   bio: z.string().optional(),
 });
 docRegistry.register("UserUpdate", UserUpdateSchema);
-
 
 /**@description User Login Doc */
 export const userLoginDoc = ({ routePath, method, tags }) => {
@@ -105,6 +112,39 @@ export const signupUserDoc = ({ routePath, method, tags }) => {
       },
     },
     responses: createApiResponse(UserSignupSchema, "Success"),
+  });
+};
+
+/**@description Update User Password Doc */
+export const updateUserPasswordDoc = ({ routePath, method, tags }) => {
+  docRegistry.registerPath({
+    method: method,
+    path: routePath,
+    tags: tags,
+    request: {
+      params: idSchema.shape.params,
+      body: {
+        description: "User login",
+        content: {
+          "application/json": { schema: UserUpdatePasswordSchema.openapi({}) },
+        },
+      },
+    },
+    responses: {
+      200: {
+        description: "Success",
+        content: {
+          "application/json": {
+            schema: {
+              type: "object",
+              properties: {
+                message: { type: "string" },
+              },
+            },
+          },
+        },
+      },
+    },
   });
 };
 

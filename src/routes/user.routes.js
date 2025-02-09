@@ -10,9 +10,10 @@ import {
   UserSignupSchema,
   updateUserDoc,
   UserUpdateSchema,
+  updateUserPasswordDoc,
 } from "../schemas/user.schema.js";
 import { commonValidations } from "../schemas/commonValidation.js";
-import * as userController from "../controllers/user.controller.js";
+import {getUserById, getUsers, postUserLogin, postUserSignup, updateUserPassword, updateUserProfile} from "../controllers/user.controller.js";
 import RouteRegistrar from "../middleware/RouteRegistrar.js";
 import { userLoginDoc } from "../schemas/user.schema.js";
 
@@ -23,39 +24,55 @@ const registrar = new RouteRegistrar(router, {
   tags: ["User"],
 });
 
+/**@description user login  */
 registrar.post("/login", {
   openApiDoc: userLoginDoc,
   schema: { bodySchema: UserLoginSchema },
-  controller: userController.postUserLogin,
+  controller: postUserLogin,
 });
 
-// signup
+/**@description user signup  */
 registrar.post("/signup", {
   openApiDoc: signupUserDoc,
   schema: { bodySchema: UserSignupSchema },
-  controller: userController.postUserSignup,
+  controller: postUserSignup,
 });
 
-// get all users
+
+/**@description get all users  */
 registrar.get("/list", {
   openApiDoc: getUserDoc,
-  controller: userController.getUsers,
+  controller: getUsers,
 });
 
+/**@description update user password  */
+registrar.put("/:id/update-password/", {
+  openApiDoc: updateUserPasswordDoc,
+  schema: {
+    paramsSchema: { id: commonValidations.id },
+    bodySchema: UserUpdateSchema,
+  },
+  controller: updateUserPassword,
+});
+
+
+/**@description get user by id  */
 registrar.get("/:id", {
   openApiDoc: getUserByIdDoc,
   schema: { paramsSchema: { id: commonValidations.id } },
-  controller: userController.getUserById,
+  controller: getUserById,
 });
 
+/**@description update user by id  */
 registrar.put("/:id", {
   openApiDoc: updateUserDoc,
   schema: {
     paramsSchema: { id: commonValidations.id },
     bodySchema: UserUpdateSchema,
   },
-  controller: userController.updateUserProfile,
+  controller: updateUserProfile,
 });
+
 
 // registrar.get("/test-query", {
 //   openApiDoc: testQueryDoc,

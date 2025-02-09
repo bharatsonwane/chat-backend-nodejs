@@ -224,4 +224,15 @@ export default class User {
     delete results[0].password;
     return results[0];
   }
+
+  async updateUserPassword() {
+    const query = `
+      UPDATE user_profile
+      SET password = '${this.hashPassword}'
+      WHERE id = ${this.id} RETURNING *;`;
+    const results = await executeQuery(query);
+
+    delete results[0].password;
+    return results[0];
+  }
 }

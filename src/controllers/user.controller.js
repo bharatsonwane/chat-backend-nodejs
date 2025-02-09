@@ -111,3 +111,24 @@ export const getUsers = async (req, res, next) => {
     res.error(error);
   }
 };
+
+export const updateUserPassword = async (req, res, next) => {
+  try {
+    const userId = req.params.id;
+    const reqBody = req.body;
+
+    /* hash password */
+    const hashPassword = await getHashPassword(reqBody.password);
+
+    const userObject = new User({
+      ...reqBody,
+      hashPassword: hashPassword,
+      id: userId,
+    });
+
+    const userResponse = await userObject.updateUserPassword();
+    res.status(200).send(userResponse);
+  } catch (error) {
+    res.error(error);
+  }
+};

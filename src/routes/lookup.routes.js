@@ -1,8 +1,14 @@
 import express from "express";
 
-import * as lookupController from "../controllers/lookup.controller.js";
+import {
+  retrieveLookupList,
+  getLookupTypeById,
+} from "../controllers/lookup.controller.js";
 import RouteRegistrar from "../middleware/RouteRegistrar.js";
-import { getLookupListDoc, getLookupTypeByIdDoc } from "../schemas/lookup.schema.js";
+import {
+  getLookupListDoc,
+  getLookupTypeByIdDoc,
+} from "../schemas/lookup.schema.js";
 
 const router = express.Router();
 const registrar = new RouteRegistrar(router, {
@@ -12,12 +18,12 @@ const registrar = new RouteRegistrar(router, {
 
 registrar.get("/list", {
   openApiDoc: getLookupListDoc,
-  controller: lookupController.retrieveLookupList,
+  controller: retrieveLookupList,
 });
 
 registrar.get("/type/:id", {
   openApiDoc: getLookupTypeByIdDoc,
-  controller: lookupController.getLookupTypeById,
+  controller: getLookupTypeById,
 });
 
 export default router;
