@@ -2,15 +2,18 @@ import { validateJwtToken } from "../helper/authHelper.js";
 
 export const authRoleMiddleware = (...allowedRoles) => {
   return async (req, res, next) => {
-    const token = req.headers["authorization"];
+    const bearerToken = req.headers["authorization"];
 
-    if (!token) {
+    if (!bearerToken) {
       return res
         .status(401)
         .json({ message: "Access denied. No token provided." });
     }
 
     try {
+      // if the token is in the format "Bearer <token>", extract the token if not user the token as is
+      const token = bearerToken.split(" ")?.[1] || bearerToken;
+
       // Validate the token
       const decoded = await validateJwtToken(token);
       req.user = decoded;
