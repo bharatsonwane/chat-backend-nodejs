@@ -8,6 +8,8 @@ import {
   testQueryDoc,
   signupUserDoc,
   UserSignupSchema,
+  updateUserDoc,
+  UserUpdateSchema,
 } from "../schemas/user.schema.js";
 import { commonValidations } from "../schemas/commonValidation.js";
 import * as userController from "../controllers/user.controller.js";
@@ -34,7 +36,6 @@ registrar.post("/signup", {
   controller: userController.postUserSignup,
 });
 
-
 // get all users
 registrar.get("/list", {
   openApiDoc: getUserDoc,
@@ -47,6 +48,14 @@ registrar.get("/:id", {
   controller: userController.getUserById,
 });
 
+registrar.put("/:id", {
+  openApiDoc: updateUserDoc,
+  schema: {
+    paramsSchema: { id: commonValidations.id },
+    bodySchema: UserUpdateSchema,
+  },
+  controller: userController.updateUserProfile,
+});
 
 // registrar.get("/test-query", {
 //   openApiDoc: testQueryDoc,
@@ -55,7 +64,5 @@ registrar.get("/:id", {
 //     res.send("test query");
 //   },
 // });
-
-
 
 export default router;

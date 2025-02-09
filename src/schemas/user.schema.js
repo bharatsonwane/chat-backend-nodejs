@@ -8,6 +8,13 @@ import { createApiResponse } from "../doc/openAPIResponseBuilders.js";
 import { idSchema } from "./commonValidation.js";
 import e from "express";
 
+/**@description user Login schema */
+export const UserLoginSchema = z.object({
+  email: z.string().email("Invalid email"),
+  password: z.string(),
+});
+docRegistry.register("UserLogin", UserLoginSchema);
+
 /**@description user signup schema */
 export const UserSignupSchema = z.object({
   email: z.string().email("Invalid email"),
@@ -17,13 +24,6 @@ export const UserSignupSchema = z.object({
   lastName: z.string().min(2),
 });
 docRegistry.register("UserSignup", UserSignupSchema);
-
-/**@description user Login schema */
-export const UserLoginSchema = z.object({
-  email: z.string().email("Invalid email"),
-  password: z.string(),
-});
-docRegistry.register("UserLogin", UserLoginSchema);
 
 /**@description User schema */
 export const UserSchema = z.object({
@@ -39,7 +39,7 @@ export const UserSchema = z.object({
     .regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date format, should be YYYY-MM-DD"),
   bloodGroup: z.enum(["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"]),
   marriedStatus: z.enum(["Single", "Married"]),
-  email: z.string().email("Invalid email"),
+  email: z.string().email("Invalid email").optional(),
   phone: z.string().min(10),
   password: z
     .string()
@@ -52,23 +52,25 @@ export const UserSchema = z.object({
 });
 docRegistry.register("User", UserSchema);
 
-/**@description User Signup Doc */
-export const signupUserDoc = ({ routePath, method, tags }) => {
-  docRegistry.registerPath({
-    method: method,
-    path: routePath,
-    tags: tags,
-    request: {
-      body: {
-        description: "User signup",
-        content: {
-          "application/json": { schema: UserSignupSchema.openapi({}) },
-        },
-      },
-    },
-    responses: createApiResponse(UserSignupSchema, "Success"),
-  });
-};
+
+
+/**@description User Update schema */
+export const UserUpdateSchema = z.object({
+  title: z.enum(["Mr", "Mrs", "Ms"]).optional(),
+  firstName: z.string().min(1).optional(),
+  lastName: z.string().min(1).optional(),
+  middleName: z.string().optional(),
+  maidenName: z.string().optional(),
+  gender: z.enum(["Male", "Female", "Other"]).optional(),
+  dob: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date format, should be YYYY-MM-DD").optional(),
+  bloodGroup: z.enum(["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"]).optional(),
+  marriedStatus: z.enum(["Single", "Married"]).optional(),
+  bio: z.string().optional(),
+});
+docRegistry.register("UserUpdate", UserUpdateSchema);
+
 
 /**@description User Login Doc */
 export const userLoginDoc = ({ routePath, method, tags }) => {
@@ -88,6 +90,24 @@ export const userLoginDoc = ({ routePath, method, tags }) => {
   });
 };
 
+/**@description User Signup Doc */
+export const signupUserDoc = ({ routePath, method, tags }) => {
+  docRegistry.registerPath({
+    method: method,
+    path: routePath,
+    tags: tags,
+    request: {
+      body: {
+        description: "User signup",
+        content: {
+          "application/json": { schema: UserSignupSchema.openapi({}) },
+        },
+      },
+    },
+    responses: createApiResponse(UserSignupSchema, "Success"),
+  });
+};
+
 /**@description Get User Doc */
 export const getUserDoc = ({ routePath, method, tags }) => {
   docRegistry.registerPath({
@@ -103,16 +123,6 @@ export const TestQuerySchema = z.object({
   query2: z.string().min(1),
 });
 
-export const testQueryDoc = ({ routePath, method, tags }) => {
-  docRegistry.registerPath({
-    method: method,
-    path: routePath,
-    tags: tags,
-    request: { query: TestQuerySchema },
-    responses: createApiResponse(z.object({ message: z.string() }), "Success"),
-  });
-};
-
 export const getUserByIdDoc = ({ routePath, method, tags }) => {
   docRegistry.registerPath({
     method: method,
@@ -120,5 +130,34 @@ export const getUserByIdDoc = ({ routePath, method, tags }) => {
     tags: tags,
     request: { params: idSchema.shape.params },
     responses: createApiResponse(UserSchema, "Success"),
+  });
+};
+
+export const updateUserDoc = ({ routePath, method, tags }) => {
+  docRegistry.registerPath({
+    method: method,
+    path: routePath,
+    tags: tags,
+    request: {
+      params: idSchema.shape.params,
+      body: {
+        description: "User login",
+        content: {
+          "application/json": { schema: UserUpdateSchema.openapi({}) },
+        },
+      },
+    },
+    responses: createApiResponse(UserSchema, "Success"),
+  });
+};
+
+/** test query doc */
+export const testQueryDoc = ({ routePath, method, tags }) => {
+  docRegistry.registerPath({
+    method: method,
+    path: routePath,
+    tags: tags,
+    request: { query: TestQuerySchema },
+    responses: createApiResponse(z.object({ message: z.string() }), "Success"),
   });
 };

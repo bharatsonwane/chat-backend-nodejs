@@ -1,6 +1,28 @@
 import { executeQuery } from "../database/db.js";
 
 export default class User {
+  static columnMapping = {
+    title: "title",
+    firstName: "first_name",
+    lastName: "last_name",
+    middleName: "middle_name",
+    maidenName: "maiden_name",
+    gender: "gender",
+    dob: "dob",
+    bloodGroup: "blood_group",
+    marriedStatus: "married_status",
+    email: "email",
+    phone: "phone",
+    password: "password",
+    hashPassword: "hash_password",
+    profilePicture: "profile_picture",
+    bio: "bio",
+    userStatusLookupId: "user_status_lookup_id",
+    userRoleLookupId: "user_role_lookup_id",
+    createdAt: "created_at",
+    updatedAt: "updated_at",
+  };
+
   constructor(reqObj) {
     this.id = reqObj.id || null;
     this.title = reqObj.title || null; // ENUM type
@@ -129,54 +151,6 @@ export default class User {
     return response;
   }
 
-  async updateUser() {
-    const query = `
-        INSERT INTO user_profile (
-                title,
-                first_name,
-                last_name,
-                middle_name,
-                maiden_name,
-                gender,
-                dob,
-                blood_group,
-                married_status,
-                email,
-                phone,
-                profile_picture,
-                bio,
-                user_status_lookup_id,
-                user_role_lookup_id,
-                created_at,
-                updated_at
-            ) VALUES (
-                '${this.title}',
-                '${this.firstName}',
-                '${this.lastName}',
-                '${this.middleName}',
-                '${this.maidenName}',
-                '${this.gender}',
-                '${this.dob}',
-                '${this.bloodGroup}',
-                '${this.marriedStatus}',
-                '${this.email}',
-                '${this.phone}',
-                '${this.profilePicture}',
-                '${this.bio}',
-                ${this.userStatusLookupId},
-                ${this.userRoleLookupId},
-                NOW(),
-                NOW()
-		    )
-        RETURNING *;`;
-    const results = await executeQuery(query);
-    const response = results[0];
-
-    delete response.password;
-
-    return response;
-  }
-
   static async getUsers() {
     const query = `
         SELECT 
@@ -210,5 +184,44 @@ export default class User {
     const results = await executeQuery(query);
 
     return results;
+  }
+
+  async updateUserInfo() {
+    const acceptedKeys = [
+      "title",
+      "firstName",
+      "lastName",
+      "middleName",
+      "maidenName",
+      "gender",
+      "dob",
+      "bloodGroup",
+      "marriedStatus",
+      "bio",
+    ];
+
+    const setQueryString = Object.keys(this)
+      .filter(
+        (key) =>
+          this[key] !== undefined &&
+          this[key] !== null &&
+          acceptedKeys.includes(key)
+      )
+      .map(
+        (key) =>
+          `${User.columnMapping[key] ? User.columnMapping[key] : key} = '${
+            this[key]
+          }'`
+      )
+      .join(", ");
+
+    const query = `
+      UPDATE user_profile
+      SET ${setQueryString}
+      WHERE id = ${this.id} RETURNING *;`;
+    const results = await executeQuery(query);
+
+    delete results[0].password;
+    return results[0];
   }
 }

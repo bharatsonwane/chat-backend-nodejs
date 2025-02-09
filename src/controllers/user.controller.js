@@ -9,20 +9,20 @@ import {
 
 export const postUserLogin = async (req, res, next) => {
   try {
-    const reqObj = req.body;
+    const reqBody = req.body;
 
-    const userObject = new User(reqObj);
+    const userObject = new User(reqBody);
 
     /** check user exists on phone and email  */
-    const userExist = await userObject.getUserByEmailOrPhone();
-    if (!userExist) {
+    const userData = await userObject.getUserByEmailOrPhone();
+    if (!userData) {
       throw new HttpError("User not found", 404);
     }
 
     /** check password */
     const isPasswordValid = await validatePassword(
-      reqObj.password,
-      userExist.password
+      reqBody.password,
+      userData.password
     );
 
     if (!isPasswordValid) {
@@ -30,12 +30,12 @@ export const postUserLogin = async (req, res, next) => {
     }
 
     const tokenData = {
-      userId: userExist.id,
-      email: userExist.email,
-      userRole: userExist.user_role,
-      user_role_lookup_id: userExist.user_role_lookup_id,
-      user_status: userExist.user_status,
-      user_status_lookup_id: userExist.user_status_lookup_id,
+      userId: userData.id,
+      email: userData.email,
+      userRole: userData.user_role,
+      user_role_lookup_id: userData.user_role_lookup_id,
+      user_status: userData.user_status,
+      user_status_lookup_id: userData.user_status_lookup_id,
     };
 
     const jwtToken = await createTwtToken(tokenData);
@@ -48,12 +48,12 @@ export const postUserLogin = async (req, res, next) => {
 
 export const postUserSignup = async (req, res, next) => {
   try {
-    const reqObj = req.body;
-    const userObject = new User(reqObj);
+    const reqBody = req.body;
+    const userObject = new User(reqBody);
 
     /** check user exists on phone and email  */
-    const userExist = await userObject.getUserByEmailOrPhone();
-    if (!userExist) {
+    const userData = await userObject.getUserByEmailOrPhone();
+    if (!userData) {
       throw new HttpError("User already exists", 400);
     }
 
@@ -64,7 +64,7 @@ export const postUserSignup = async (req, res, next) => {
     userObject.userRoleLookupId = await Lookup.getUserRoleUserId();
 
     /* hash password */
-    userObject.hashPassword = await getHashPassword(reqObj.password);
+    userObject.hashPassword = await getHashPassword(reqBody.password);
 
     const registeredUser = await userObject.signupUser();
 
@@ -92,10 +92,12 @@ export const getUserById = async (req, res, next) => {
 
 export const updateUserProfile = async (req, res, next) => {
   try {
-    // const reqObj = req.body;
-    // const userInfo = req.userInfo;
-    // const resObj = await User.updateUserProfile(reqObj, userInfo);
-    // res.status(200).send(resObj);
+    const userId = req.params.id;
+    const reqBody = req.body;
+    const userObject = new User({ ...reqBody, id: userId });
+
+    const userResponse = await userObject.updateUserInfo();
+    res.status(200).send(userResponse);
   } catch (error) {
     res.error(error);
   }
@@ -103,10 +105,9 @@ export const updateUserProfile = async (req, res, next) => {
 
 export const getUsers = async (req, res, next) => {
   try {
-
     const users = await User.getUsers();
     res.status(200).send(users);
   } catch (error) {
     res.error(error);
   }
-}
+};
