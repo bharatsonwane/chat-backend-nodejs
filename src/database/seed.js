@@ -41,10 +41,9 @@ async function main() {
           RETURNING id, name;
         `;
 
-        const lookupTypeResult = await db.executeQuery(
-          upsertLookupTypeQuery,
-          [lookupType.name]
-        );
+        const lookupTypeResult = await db.query(upsertLookupTypeQuery, [
+          lookupType.name,
+        ]);
         const { id: lookupTypeId, name: lookupTypeName } = lookupTypeResult[0];
 
         /** Step 2: Upsert Lookups for this LookupType */
@@ -52,12 +51,11 @@ async function main() {
           const upsertLookupQuery = `
             INSERT INTO lookup (label, lookup_type_id, created_at, updated_at)
             VALUES ('${lookup.label}', ${lookupTypeId}, NOW(), NOW())
-            ON CONFLICT (label, lookup_type_id) DO NOTHING
+            ON CONFLICT (label, lookup_type_id) DO UPDATE
+            SET updated_at = NOW()
             RETURNING id, label, lookup_type_id
           `;
-
-          const lookupResult = await db.executeQuery(upsertLookupQuery);
-          console.log("lookupResult", lookupResult);
+          const lookupResult = await db.query(upsertLookupQuery);
         }
       }
 
@@ -67,10 +65,11 @@ async function main() {
           INNER JOIN lookup l ON lt.id = l.lookup_type_id
           WHERE lt.name = $1 AND l.label = $2;
         `;
-        const lookupDataResult = await db.executeQuery(
-          getLookupDataQuery,
-          [lookupTypeName, lookupLabel]
-        );
+
+        const lookupDataResult = await db.query(getLookupDataQuery, [
+          lookupTypeName,
+          lookupLabel,
+        ]);
         return lookupDataResult[0];
       };
 
@@ -78,7 +77,6 @@ async function main() {
     };
 
     const { getLookupDataByTypeLabel } = await upsertAndFetchLookupData();
-    console.log("superAdmin2");
 
     const superAdmin = await getLookupDataByTypeLabel(
       "userRole",
@@ -178,13 +176,11 @@ async function main() {
           RETURNING *;
         `;
 
-        const userResult = await db.executeQuery(upsertUserQuery);
+        const userResult = await db.query(upsertUserQuery);
         const userResponse = userResult[0];
       }
-      console.log("Upsert operation completed successfully!");
     };
     // const userData = await upsertAndFetchUserData();
-    // console.log("userData", userData);
   } catch (error) {
     logger.error("Error occurred during seeding:", error);
   } finally {

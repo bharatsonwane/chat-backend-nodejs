@@ -6,7 +6,7 @@ export default class Lookup {
 
   static async retrieveLookupList() {
     // SQL Query to fetch all LookupTypes with their associated Lookups
-    const query = `
+    const queryString = `
      SELECT 
        lt.id AS "lookupTypeId",
        lt.name AS "lookupTypeName",
@@ -16,8 +16,8 @@ export default class Lookup {
      LEFT JOIN lookup l ON lt.id = l.lookup_type_id;
    `;
 
-    // Execute the query
-    const results = await db.executeQuery(query);
+    // Execute the queryString
+    const results = await db.query(queryString);
 
     // Group results by LookupType
     const groupedData = results.reduce((acc, row) => {
@@ -58,7 +58,7 @@ export default class Lookup {
   }
 
   static async getLookupTypeById(id) {
-    const query = `
+    const queryString = `
      SELECT 
        lt.id AS "lookupTypeId",
        lt.name AS "lookupTypeName",
@@ -69,8 +69,8 @@ export default class Lookup {
      WHERE lt.id = ${id};
     `;
 
-    // Execute the query
-    const results = await db.executeQuery(query);
+    // Execute the queryString
+    const results = await db.query(queryString);
 
     if (results.length === 0) {
       throw new HttpError("Lookup Type not found", 404);
@@ -97,13 +97,13 @@ export default class Lookup {
   }
 
   static async getUserStatusPendingId() {
-    const query = `
+    const queryString = `
       SELECT l.id 
       FROM lookup l
       INNER JOIN lookup_type lt ON l.lookup_type_id = lt.id
       WHERE l.label = 'Pending' AND lt.name = 'userStatus';
     `;
-    const results = await db.executeQuery(query);
+    const results = await db.query(queryString);
 
     if (results.length === 0) {
       throw new HttpError("Lookup Pending user_status not found.", 404);
@@ -113,12 +113,12 @@ export default class Lookup {
   }
 
   static async getUserRoleUserId() {
-    const query = `
+    const queryString = `
       SELECT l.id
       FROM lookup l
       INNER JOIN lookup_type lt ON l.lookup_type_id = lt.id
       WHERE l.label = 'Standard' AND lt.name = 'userRole';`;
-    const results = await db.executeQuery(query);
+    const results = await db.query(queryString);
 
     if (results.length === 0) {
       throw new HttpError("Lookup User user_role not found.", 404);

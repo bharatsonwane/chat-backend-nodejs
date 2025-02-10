@@ -71,13 +71,13 @@ export default class User {
                 NOW()
         )
         RETURNING *;`;
-    const results = await db.executeQuery(userSignupQuery);
+    const results = await db.query(userSignupQuery);
     const response = results[0];
     return response;
   }
 
   async getUserByEmailOrPhone() {
-    const query = `
+    const queryString = `
         SELECT 
         up.id,
         up.title,
@@ -108,14 +108,14 @@ export default class User {
         lookup url ON up.user_role_lookup_id = url.id
       WHERE email = '${this.email}' OR phone = '${this.phone}';`;
 
-    const results = await db.executeQuery(query);
+    const results = await db.query(queryString);
     const response = results[0];
 
     return response;
   }
 
   async getUserById() {
-    const query = `
+    const queryString = `
     SELECT 
     up.id,
     up.title,
@@ -145,14 +145,14 @@ export default class User {
     lookup url ON up.user_role_lookup_id = url.id
   WHERE up.id = ${this.id};`;
 
-    const results = await db.executeQuery(query);
+    const results = await db.query(queryString);
     const response = results[0];
 
     return response;
   }
 
   static async getUsers() {
-    const query = `
+    const queryString = `
         SELECT 
           up.id,
           up.title,
@@ -181,7 +181,7 @@ export default class User {
       LEFT JOIN 
         lookup url ON up.user_role_lookup_id = url.id;`;
 
-    const results = await db.executeQuery(query);
+    const results = await db.query(queryString);
 
     return results;
   }
@@ -215,22 +215,22 @@ export default class User {
       )
       .join(", ");
 
-    const query = `
+    const queryString = `
       UPDATE user_profile
       SET ${setQueryString}
       WHERE id = ${this.id} RETURNING *;`;
-    const results = await db.executeQuery(query);
+    const results = await db.query(queryString);
 
     delete results[0].password;
     return results[0];
   }
 
   async updateUserPassword() {
-    const query = `
+    const queryString = `
       UPDATE user_profile
       SET password = '${this.hashPassword}'
       WHERE id = ${this.id} RETURNING *;`;
-    const results = await db.executeQuery(query);
+    const results = await db.query(queryString);
 
     delete results[0].password;
     return results[0];
