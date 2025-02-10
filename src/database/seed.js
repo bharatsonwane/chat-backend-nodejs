@@ -78,9 +78,16 @@ async function main() {
 
     const { getLookupDataByTypeLabel } = await upsertAndFetchLookupData();
 
-    const superAdmin = await getLookupDataByTypeLabel(
+    const superAdminData = await getLookupDataByTypeLabel(
       "userRole",
       "Super Admin"
+    );
+
+    const adminData = await getLookupDataByTypeLabel("userRole", "Admin");
+
+    const activeUserStatusData = await getLookupDataByTypeLabel(
+      "userStatus",
+      "Active"
     );
 
     const upsertAndFetchUserData = async () => {
@@ -100,8 +107,8 @@ async function main() {
           password: "Super@123",
           profilePicture: "",
           bio: "This is Super Admin",
-          userStatusLookupId: 0,
-          userRoleLookupId: 0,
+          userStatusLookupId: superAdminData.id,
+          userRoleLookupId: activeUserStatusData.id,
         },
         {
           title: "Mr",
@@ -118,22 +125,17 @@ async function main() {
           password: "Admin@123",
           profilePicture: "",
           bio: "This is Admin user",
-          userStatusLookupId: 0,
-          userRoleLookupId: 0,
+          userStatusLookupId: adminData.id,
+          userRoleLookupId: activeUserStatusData.id,
         },
       ];
-
-      // const superAdmin = await getLookupDataByTypeLabel(
-      //   "userRole",
-      //   "Super Admin"
-      // );
 
       for (const userData of userDataList) {
         // Step 1: Upsert User and on conflict skip and return user
 
         const hashedPassword = await getHashPassword(userData.password);
         const upsertUserQuery = `
-          INSERT INTO "User" (
+          INSERT INTO user_profile (
             title,
             first_name,
             last_name,
@@ -153,20 +155,20 @@ async function main() {
             created_at,
             updated_at)
           VALUES (
-              ${userData.title},
-              ${userData.firstName},
-              ${userData.lastName},
-              ${userData.middleName},
-              ${userData.maidenName},
-              ${userData.gender},
-              ${userData.dob},
-              ${userData.bloodGroup},
-              ${userData.marriedStatus},
-              ${userData.email},
-              ${userData.phone},
-              ${hashedPassword},
-              ${userData.profilePicture},
-              ${userData.bio},
+              '${userData.title}',
+              '${userData.firstName}',
+              '${userData.lastName}',
+              '${userData.middleName}',
+              '${userData.maidenName}',
+              '${userData.gender}',
+              '${userData.dob}',
+              '${userData.bloodGroup}',
+              '${userData.marriedStatus}',
+              '${userData.email}',
+              '${userData.phone}',
+              '${hashedPassword}',
+              '${userData.profilePicture}',
+              '${userData.bio}',
               ${userData.userStatusLookupId},
               ${userData.userRoleLookupId},
               NOW(),
@@ -180,7 +182,8 @@ async function main() {
         const userResponse = userResult[0];
       }
     };
-    // const userData = await upsertAndFetchUserData();
+
+    const userData = await upsertAndFetchUserData();
   } catch (error) {
     logger.error("Error occurred during seeding:", error);
   } finally {
