@@ -1,8 +1,8 @@
 import logger from "../helper/logger.js";
-import { migrateDatabases } from "./db.js";
+import db from "./db.js";
 
 const main = async () => {
-  await migrateDatabases();
+  await db.migrateDatabases();
 };
 
 main()
