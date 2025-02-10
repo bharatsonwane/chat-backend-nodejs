@@ -1,15 +1,14 @@
-class LoggerInstance {
+class LoggerC {
   constructor() {
-    this.log = process.env.NODE_ENV === 'development' ? console.log : () => {};
-    this.info =
-      process.env.NODE_ENV === 'development' ? console.info : () => {};
-    this.warn =
-      process.env.NODE_ENV === 'development' ? console.warn : () => {};
-    this.error =
-      process.env.NODE_ENV === 'development' ? console.error : () => {};
+    this.NODE_ENV = process.env.NODE_ENV || "development";
+
+    this.log = this.NODE_ENV === "development" ? console.log : () => {};
+    this.info = this.NODE_ENV === "development" ? console.info : () => {};
+    this.warn = this.NODE_ENV === "development" ? console.warn : () => {};
+    this.error = this.NODE_ENV === "development" ? console.error : () => {};
   }
 }
 
-const logger = new LoggerInstance();
-
+const logger = new LoggerC();
+export { logger };
 export default logger;

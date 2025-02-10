@@ -77,6 +77,9 @@ class Database {
     } catch (error) {
       logger.error("Migration failed", error);
       throw error;
+    } finally {
+      logger.log("Migration completed");
+      this.client.end();
     }
   }
 }
