@@ -1,4 +1,4 @@
-import { executeQuery } from "../database/db.js";
+import db from "../database/db.js";
 import { HttpError } from "../helper/httpError.js";
 
 export default class Lookup {
@@ -17,7 +17,7 @@ export default class Lookup {
    `;
 
     // Execute the query
-    const results = await executeQuery(query);
+    const results = await db.executeQuery(query);
 
     // Group results by LookupType
     const groupedData = results.reduce((acc, row) => {
@@ -70,7 +70,7 @@ export default class Lookup {
     `;
 
     // Execute the query
-    const results = await executeQuery(query);
+    const results = await db.executeQuery(query);
 
     if (results.length === 0) {
       throw new HttpError("Lookup Type not found", 404);
@@ -103,7 +103,7 @@ export default class Lookup {
       INNER JOIN lookup_type lt ON l.lookup_type_id = lt.id
       WHERE l.label = 'Pending' AND lt.name = 'userStatus';
     `;
-    const results = await executeQuery(query);
+    const results = await db.executeQuery(query);
 
     if (results.length === 0) {
       throw new HttpError("Lookup Pending user_status not found.", 404);
@@ -117,8 +117,8 @@ export default class Lookup {
       SELECT l.id
       FROM lookup l
       INNER JOIN lookup_type lt ON l.lookup_type_id = lt.id
-      WHERE l.label = 'Standard' AND lt.name = 'userRole';`
-    const results = await executeQuery(query);
+      WHERE l.label = 'Standard' AND lt.name = 'userRole';`;
+    const results = await db.executeQuery(query);
 
     if (results.length === 0) {
       throw new HttpError("Lookup User user_role not found.", 404);

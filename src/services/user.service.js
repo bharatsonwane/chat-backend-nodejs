@@ -1,4 +1,4 @@
-import { executeQuery } from "../database/db.js";
+import db from "../database/db.js";
 
 export default class User {
   static columnMapping = {
@@ -71,7 +71,7 @@ export default class User {
                 NOW()
         )
         RETURNING *;`;
-    const results = await executeQuery(userSignupQuery);
+    const results = await db.executeQuery(userSignupQuery);
     const response = results[0];
     return response;
   }
@@ -108,7 +108,7 @@ export default class User {
         lookup url ON up.user_role_lookup_id = url.id
       WHERE email = '${this.email}' OR phone = '${this.phone}';`;
 
-    const results = await executeQuery(query);
+    const results = await db.executeQuery(query);
     const response = results[0];
 
     return response;
@@ -145,7 +145,7 @@ export default class User {
     lookup url ON up.user_role_lookup_id = url.id
   WHERE up.id = ${this.id};`;
 
-    const results = await executeQuery(query);
+    const results = await db.executeQuery(query);
     const response = results[0];
 
     return response;
@@ -181,7 +181,7 @@ export default class User {
       LEFT JOIN 
         lookup url ON up.user_role_lookup_id = url.id;`;
 
-    const results = await executeQuery(query);
+    const results = await db.executeQuery(query);
 
     return results;
   }
@@ -219,7 +219,7 @@ export default class User {
       UPDATE user_profile
       SET ${setQueryString}
       WHERE id = ${this.id} RETURNING *;`;
-    const results = await executeQuery(query);
+    const results = await db.executeQuery(query);
 
     delete results[0].password;
     return results[0];
@@ -230,7 +230,7 @@ export default class User {
       UPDATE user_profile
       SET password = '${this.hashPassword}'
       WHERE id = ${this.id} RETURNING *;`;
-    const results = await executeQuery(query);
+    const results = await db.executeQuery(query);
 
     delete results[0].password;
     return results[0];

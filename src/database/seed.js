@@ -1,5 +1,5 @@
 import logger from "../helper/logger.js";
-import { executeQuery } from "./db.js";
+import db from "./db.js";
 import { getHashPassword } from "../helper/authHelper.js";
 
 async function main() {
@@ -41,9 +41,10 @@ async function main() {
           RETURNING id, name;
         `;
 
-        const lookupTypeResult = await executeQuery(upsertLookupTypeQuery, [
-          lookupType.name,
-        ]);
+        const lookupTypeResult = await db.executeQuery(
+          upsertLookupTypeQuery,
+          [lookupType.name]
+        );
         const { id: lookupTypeId, name: lookupTypeName } = lookupTypeResult[0];
 
         /** Step 2: Upsert Lookups for this LookupType */
@@ -55,22 +56,21 @@ async function main() {
             RETURNING id, label, lookup_type_id
           `;
 
-          const lookupResult = await executeQuery(upsertLookupQuery);
+          const lookupResult = await db.executeQuery(upsertLookupQuery);
           console.log("lookupResult", lookupResult);
         }
       }
 
-      
       const getLookupDataByTypeLabel = async (lookupTypeName, lookupLabel) => {
         const getLookupDataQuery = `
           SELECT * FROM lookup_type lt
           INNER JOIN lookup l ON lt.id = l.lookup_type_id
           WHERE lt.name = $1 AND l.label = $2;
         `;
-        const lookupDataResult = await executeQuery(getLookupDataQuery, [
-          lookupTypeName,
-          lookupLabel,
-        ]);
+        const lookupDataResult = await db.executeQuery(
+          getLookupDataQuery,
+          [lookupTypeName, lookupLabel]
+        );
         return lookupDataResult[0];
       };
 
@@ -178,7 +178,7 @@ async function main() {
           RETURNING *;
         `;
 
-        const userResult = await executeQuery(upsertUserQuery);
+        const userResult = await db.executeQuery(upsertUserQuery);
         const userResponse = userResult[0];
       }
       console.log("Upsert operation completed successfully!");
