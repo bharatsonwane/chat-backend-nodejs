@@ -12,7 +12,6 @@ class Database {
   constructor() {
     this.pool = null;
     this.client = null;
-    this.getDbPool();
   }
 
   getDbPool() {
