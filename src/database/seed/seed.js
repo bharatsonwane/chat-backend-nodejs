@@ -1,6 +1,6 @@
-import logger from "../helper/logger.js";
-import db from "./db.js";
-import { getHashPassword } from "../helper/authHelper.js";
+import logger from "../../helper/logger.js";
+import db from "../db.js";
+import { getHashPassword } from "../../helper/authHelper.js";
 
 async function main() {
   try {

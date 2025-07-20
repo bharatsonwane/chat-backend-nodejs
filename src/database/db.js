@@ -1,8 +1,5 @@
 //@ts-ignore
-import Postgrator from "postgrator";
 import pg from "pg";
-import { dirname } from "path";
-import { fileURLToPath } from "url";
 import { envVariable } from "../config/envVariable.js";
 import logger from "../helper/logger.js";
 
@@ -51,66 +48,51 @@ class Database {
   }
 
   async query(text, params) {
-    const client = await this.getDbPool().connect();
+    const pool = await this.getDbPool().connect();
     try {
-      const result = await client.query(text, params);
+      const result = await pool.query(text, params);
       return result.rows;
     } catch (error) {
       logger.error("Database Query Error:", error);
       throw error;
     } finally {
-      client.release(true); // true parameter forces the release even if there's an error
+      pool.release(true); // true parameter forces the release even if there's an error
     }
   }
 
-  async transaction() {
-    const client = await this.getDbPool().connect();
+  async getSchemaPool(schemaName = "public") {
+    const pool = await this.getDbPool().connect();
     try {
-      await client.query("BEGIN");
+      await pool.query(`SET search_path TO ${schemaName}`);
+      return pool;
+    } catch (error) {
+      pool.release();
+      logger.error(`Failed to set schema "${schemaName}"`, error);
+      throw error;
+    }
+  }
+
+  async transaction(schemaName = "public") {
+    const pool = await this.getDbPool().connect();
+    try {
+      await pool.query(`SET search_path TO ${schemaName}, public`);
+      await pool.query("BEGIN");
+
       const commit = async () => {
-        await client.query("COMMIT");
-        client.release(true);
+        await pool.query("COMMIT");
+        pool.release(true);
       };
+
       const rollback = async () => {
-        await client.query("ROLLBACK");
-        client.release(true);
+        await pool.query("ROLLBACK");
+        pool.release(true);
       };
 
-      return { client, commit, rollback };
+      return { pool, commit, rollback };
     } catch (error) {
-      logger.error("Database Transaction Error:", error);
-      client.release(true);
+      pool.release(true);
+      logger.error("Transaction Error:", error);
       throw error;
-    }
-  }
-
-  async migrateDatabases() {
-    let migrationClient = null;
-    try {
-      const __dirname = dirname(fileURLToPath(import.meta.url));
-      migrationClient = await this.getDbClient();
-
-      const postgrator = new Postgrator({
-        migrationPattern: __dirname + "/migrations/*",
-        driver: "pg",
-        database: envVariable.DB_NAME,
-        schemaTable: "migration_version",
-        execQuery: (query) => migrationClient.query(query),
-      });
-
-      const databaseVersion = await postgrator.getDatabaseVersion();
-      const maxVersion = await postgrator.getMaxVersion();
-      const migrations = await postgrator.migrate();
-
-      logger.info(`Migration completed. Current version: ${maxVersion}`);
-      return migrations;
-    } catch (error) {
-      logger.error("Migration failed", error);
-      throw error;
-    } finally {
-      if (migrationClient) {
-        await migrationClient.end();
-      }
     }
   }
 
