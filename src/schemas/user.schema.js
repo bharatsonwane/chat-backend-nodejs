@@ -77,7 +77,12 @@ export const UserUpdateSchema = z.object({
 docRegistry.register("UserUpdate", UserUpdateSchema);
 
 /**@description Update User Password Doc */
-export const updateUserPasswordDoc = ({ routePath, method, tags, security }) => {
+export const updateUserPasswordDoc = ({
+  routePath,
+  method,
+  tags,
+  security,
+}) => {
   docRegistry.registerPath({
     method: method,
     path: routePath,
@@ -137,3 +142,11 @@ export const testQueryDoc = ({ routePath, method, tags }) => {
     responses: createApiResponse(z.object({ message: z.string() }), "Success"),
   });
 };
+
+export const ChatMessageSchema = z.object({
+  senderId: z.string().uuid({ message: "Invalid sender ID" }),
+  receiverId: z.string().uuid({ message: "Invalid receiver ID" }),
+  message: z.string().min(1, "Message is required"),
+  mediaUrl: z.string().url().optional(),
+}).openapi("ChatMessage"); // ✅
+

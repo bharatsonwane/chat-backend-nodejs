@@ -1,11 +1,13 @@
 // @ts-ignore
-import { Umzug } from "umzug";
+import Umzug from "umzug";
+
 import fs from "fs/promises";
 import path from "path";
 import crypto from "crypto";
 import { pathToFileURL, fileURLToPath } from "url";
 import db from "./db.js";
 import logger from "../helper/logger.js";
+
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 

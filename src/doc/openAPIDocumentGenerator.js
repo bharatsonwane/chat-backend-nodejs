@@ -76,10 +76,11 @@ export const commonDocCreator = ({
         ? {
             description: description,
             content: {
-              "application/json": { schema: bodySchema.openapi({}) },
+              "application/json": { schema: bodySchema },
             },
           }
         : undefined,
+
       query: querySchema ? querySchema : undefined,
     },
     responses: {},
