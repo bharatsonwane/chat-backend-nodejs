@@ -19,7 +19,7 @@ export default class Chat {
     (this.read_by = read_by), (this.reaction = reaction);
   }
 
- static saveMessage() {
+ static async saveMessage() {
     const query = `
     INSERT INTO chat_message (
       text, media, sent_user_id, chat_room_id, created_at, delivered_to, read_by, reaction
