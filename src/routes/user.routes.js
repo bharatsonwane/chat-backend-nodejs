@@ -12,10 +12,12 @@ import {
 } from "../schemas/user.schema.js";
 import { idValidation } from "../schemas/common.schema.js";
 import {
+  createUserProfile,
   getUserById,
   getUsers,
   postUserLogin,
   postUserSignup,
+  signoutUser,
   updateUserPassword,
   updateUserProfile,
 } from "../controllers/user.controller.js";
@@ -50,6 +52,13 @@ registrar.get("/list", {
   controller: getUsers,
 });
 
+/**@description Create User */
+registrar.post("/create-user", {
+  requestSchema: { bodySchema: UserSchema },
+  responseSchemas: [{ statusCode: 200, schema: UserSchema }],
+  controller: createUserProfile,
+});
+
 /**@description update user password  */
 registrar.put("/:id/update-password/", {
   openApiDoc: updateUserPasswordDoc,
@@ -77,6 +86,13 @@ registrar.put("/:id", {
   responseSchemas: [{ statusCode: 200, schema: UserSchema }],
   middleware: [authRoleMiddleware()],
   controller: updateUserProfile,
+});
+
+/**@description user signout */
+
+/**@description signout user */
+registrar.post("/signout", {
+  controller: signoutUser,
 });
 
 // registrar.get("/test-query", {

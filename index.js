@@ -2,6 +2,7 @@
 import path from "path";
 
 import express from "express";
+import cors from "cors";
 
 import { envVariable } from "./src/config/envVariable.js";
 import routes from "./src/routes/routes.js";
@@ -13,6 +14,13 @@ import logger from "./src/helper/logger.js";
 async function main() {
   /** define add */
   const app = express();
+
+  app.use(
+    cors({
+      origin: "http://localhost:5173", // ✅ frontend origin
+      credentials: true, // ✅ allow cookies
+    })
+  );
 
   /** add middleware  */
   app.use(express.json());

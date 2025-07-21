@@ -235,4 +235,51 @@ export default class User {
     delete results[0].password;
     return results[0];
   }
+
+  async createUserInfo() {
+    const acceptedKeys = [
+      "title",
+      "firstName",
+      "lastName",
+      "middleName",
+      "maidenName",
+      "gender",
+      "dob",
+      "bloodGroup",
+      "marriedStatus",
+      "email",
+      "phone",
+      "hashPassword",
+      "profilePicture",
+      "bio",
+      "userStatusLookupId",
+      "userRoleLookupId",
+    ];
+
+    const keysToInsert = acceptedKeys.filter(
+      (key) => this[key] !== undefined && this[key] !== null
+    );
+
+    const columns = keysToInsert.map((key) => User.columnMapping[key] || key);
+    const values = keysToInsert.map((key) => `'${this[key]}'`);
+
+    const queryString = `
+    INSERT INTO user_profile (
+      ${columns.join(", ")},
+      created_at,
+      updated_at
+    ) VALUES (
+      ${values.join(", ")},
+      NOW(),
+      NOW()
+    )
+    RETURNING *;
+  `;
+
+    const results = await db.query(queryString);
+    const response = results[0];
+    delete response.password;
+
+    return response;
+  }
 }

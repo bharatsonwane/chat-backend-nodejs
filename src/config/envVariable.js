@@ -25,20 +25,29 @@ const envVariableSchema = z.object({
 
 const getEnvVariable = () => {
   try {
+    // DEBUG LOG: show raw process.env values
+    console.log("Loaded ENV values:");
+    console.log({
+      NODE_ENV: process.env.NODE_ENV,
+      API_HOST: process.env.API_HOST,
+      API_PORT: process.env.API_PORT,
+      DB_HOST: process.env.DB_HOST,
+      DB_USER: process.env.DB_USER,
+      DB_PASSWORD: process.env.DB_PASSWORD,
+      DB_NAME: process.env.DB_NAME,
+      DB_PORT: process.env.DB_PORT,
+      JWT_SECRET: process.env.JWT_SECRET,
+    });
+
     const environmentVariable = {
-      /* server */
       NODE_ENV: process.env.NODE_ENV,
       API_HOST: process.env.API_HOST,
       API_PORT: Number(process.env.API_PORT),
-
-      /* database */
       DB_HOST: process.env.DB_HOST,
       DB_USER: process.env.DB_USER,
       DB_PASSWORD: process.env.DB_PASSWORD,
       DB_NAME: process.env.DB_NAME,
       DB_PORT: Number(process.env.DB_PORT),
-
-      /* auth */
       JWT_SECRET: process.env.JWT_SECRET,
     };
 

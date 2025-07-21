@@ -50,7 +50,7 @@ export const postUserSignup = async (req, res, next) => {
   try {
     const reqBody = req.body;
     const userObject = new User(reqBody);
-    debugger
+    debugger;
 
     /** check user exists on phone and email  */
     const userData = await userObject.getUserByEmailOrPhone();
@@ -86,6 +86,33 @@ export const getUserById = async (req, res, next) => {
     }
 
     res.status(200).send(user);
+  } catch (error) {
+    res.error(error);
+  }
+};
+
+// export const createUserProfile=async(req,res,next)=>{
+//   try {
+//     const reqBody=req.body
+//     const userObject=new User({...reqBody,})
+
+//   } catch (error) {
+
+//   }
+// }
+
+export const createUserProfile = async (req, res, next) => {
+  try {
+    const reqBody = req.body;
+    const userObject = new User(reqBody);
+
+    const existingProfile = await userObject.updateUserInfo();
+    if (existingProfile) {
+      throw new HttpError("User profile already exists", 400);
+    }
+
+    const createdProfile = await userObject.createUserInfo();
+    res.status(201).send(createdProfile);
   } catch (error) {
     res.error(error);
   }
@@ -131,5 +158,21 @@ export const updateUserPassword = async (req, res, next) => {
     res.status(200).send(userResponse);
   } catch (error) {
     res.error(error);
+  }
+};
+
+export const signoutUser = async (req, res) => {
+  try {
+    // Clear the JWT token cookie (you must use the same name as when you set it)
+    res.clearCookie("token", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+    });
+
+    res.status(200).json({ message: "Signed out successfully" });
+  } catch (error) {
+    console.error("Signout error:", error);
+    res.status(500).json({ message: "Signout failed", error });
   }
 };
